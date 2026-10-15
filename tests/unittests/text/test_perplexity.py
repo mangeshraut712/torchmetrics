@@ -98,12 +98,17 @@ class TestPerplexity(MetricTester):
 
 
 def test_perplexity_float16_many_tokens_does_not_overflow():
-    """A long float16 sequence should stay finite, with perplexity near 2 for uniform logits."""
+    """A long float16 sequence should stay finite, with perplexity near 2 for uniform logits.
+
+    Kept on CPU: the overflow is a dtype-accumulation bug, not a device-specific one, and a
+    1x100k softmax is unnecessarily heavy for the CUDA Lit matrix.
+    """
     preds = torch.zeros(1, 100_000, 2, dtype=torch.float16)
     target = torch.zeros(1, 100_000, dtype=torch.long)
     expected = torch.tensor(2.0)
 
     result = perplexity(preds, target)
+    assert result.device.type == "cpu"
     assert torch.isfinite(result)
     assert torch.allclose(result.float(), expected, atol=1e-2, rtol=0.0)
 
