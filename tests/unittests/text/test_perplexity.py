@@ -102,6 +102,7 @@ def test_perplexity_float16_many_tokens_does_not_overflow():
 
     Kept on CPU: the overflow is a dtype-accumulation bug, not a device-specific one, and a
     1x100k softmax is unnecessarily heavy for the CUDA Lit matrix.
+
     """
     preds = torch.zeros(1, 100_000, 2, dtype=torch.float16)
     target = torch.zeros(1, 100_000, dtype=torch.long)
