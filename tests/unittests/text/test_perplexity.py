@@ -110,6 +110,7 @@ def test_perplexity_float16_many_tokens_does_not_overflow():
 
     result = perplexity(preds, target)
     assert result.device.type == "cpu"
+    assert result.dtype == torch.float32
     assert torch.isfinite(result)
     assert torch.allclose(result.float(), expected, atol=1e-2, rtol=0.0)
 
